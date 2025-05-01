@@ -51,14 +51,16 @@ export const useSTT = (): {
       // Send recorder data when available to Deepgram
       recorder.audioRecorder.ondataavailable = (event) => {
         if (event.data.size > 0 && connection) {
+          // console.log("STT - Sending audio data to Deepgram", event.data);
           connection.send(event.data);
         }
       }
     });
-  }, [recorders]);
+  }, [recorders, connection]);
 
   // 3. Receive subtitles from Deepgram
   useEffect(() => {
+    console.log("STT - Connection Changed", connectionState, connection);
     if (connection) {
       connection?.on(LiveTranscriptionEvents.Transcript, (transcript) => {
         const text = transcript.channel.alternatives[0].transcript;
@@ -68,7 +70,11 @@ export const useSTT = (): {
         }
       });
     }
-  }, [connection]);
+  }, [connection, connectionState]);
+
+  useEffect(() => {
+    console.log("STT - Connection State Changed", connectionState);
+  }, [connectionState]);
 
   return {
     connectionState,
