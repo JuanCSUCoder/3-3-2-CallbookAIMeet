@@ -4,7 +4,7 @@ import { RoomEvent, Track } from "livekit-client";
 import React from "react";
 
 export const useLiveKitConferenceData = () => {
-  console.log("LKCD - Processing");
+  // console.log("LKCD - Processing");
 
   const [widgetState, setWidgetState] = React.useState<WidgetState>({
     showChat: false,
