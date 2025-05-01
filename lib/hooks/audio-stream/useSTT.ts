@@ -45,14 +45,17 @@ export const useSTT = (): {
   }, []);
 
   // 2. Send audio stream to Deepgram
-  recorders.forEach(recorder => {
-    // Send recorder data when available to Deepgram
-    recorder.audioRecorder.ondataavailable = (event) => {
-      if (event.data.size > 0 && connection) {
-        connection.send(event.data);
+  useEffect(() => {
+    // console.log("STT - Recorders Changed", recorders);
+    recorders.forEach(recorder => {
+      // Send recorder data when available to Deepgram
+      recorder.audioRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0 && connection) {
+          connection.send(event.data);
+        }
       }
-    }
-  });
+    });
+  }, [recorders]);
 
   // 3. Receive subtitles from Deepgram
   useEffect(() => {

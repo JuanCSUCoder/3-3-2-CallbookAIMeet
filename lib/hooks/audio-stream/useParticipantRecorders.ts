@@ -15,11 +15,9 @@ export const useParticipantRecorders = (room: Room): ParticipantRecorder[] => {
   const [mediaRecorders, setMediaRecorders] = useState<ParticipantRecorder[]>([]);
 
   useEffect(() => {
-    console.log("STT.Processor - Streams Changed", streams);
-    for (let i = 0; i < streams.length; i++) {
-      const stream = streams[i];
-      
-      setMediaRecorders(prev => {
+    // console.log("STT.Processor - Streams Changed", streams);
+    setMediaRecorders(_ => {
+      return streams.map((stream) => {
         const audioRecorder = new MediaRecorder(stream.audioStream, {
           mimeType: "audio/webm",
           audioBitsPerSecond: 128000,
@@ -28,12 +26,12 @@ export const useParticipantRecorders = (room: Room): ParticipantRecorder[] => {
         audioRecorder.start(250);
         audioRecorder.resume();
 
-        return [...prev, {
+        return {
           audioRecorder,
           participant: stream.participant,
-        }];
+        };
       });
-    }
+    });
   }, [streams]);
 
   return mediaRecorders;
