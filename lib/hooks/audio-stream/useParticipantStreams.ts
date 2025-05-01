@@ -27,6 +27,8 @@ export const useParticipantStreams = (room: Room): ParticipantStream[] => {
       RoomEvent.ParticipantMetadataChanged,
       // RoomEvent.TrackPublished,
       // RoomEvent.TrackUnpublished,
+      RoomEvent.TrackMuted,
+      RoomEvent.TrackUnmuted,
     ],
     room,
   });
@@ -34,19 +36,14 @@ export const useParticipantStreams = (room: Room): ParticipantStream[] => {
   // console.log("STT.Processor.Audio - Tracks", tracks);
 
   useEffect(() => {
+    // console.log("STT.Processor.Audio - Tracks Changed", tracks);
     // 2. Get audio streams for the participants, to send to STT
-    for (let i = 0; i < tracks.length; i++) {
-      const track = tracks[i] as TrackReference;
-      const mediaStream = track.publication.track?.mediaStream;
-      if (mediaStream) {
-        setAudioStreams(streams => {
-          return [...streams, {
-            participant: track.participant.identity,
-            audioStream: mediaStream,
-          }]
-        });
-      }
-    }
+    setAudioStreams(_ => {
+      return tracks.map((track) => ({
+        participant: track.participant.identity as string,
+        audioStream: track.publication.track?.mediaStream as MediaStream,
+      } as ParticipantStream));
+    });
   }, [tracks]);
 
   return audioStreams;

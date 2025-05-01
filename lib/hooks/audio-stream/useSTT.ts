@@ -12,7 +12,7 @@ export interface ParticipantSubtitles {
 
 export const useSTT = (): {
   connectionState: SOCKET_STATES;
-  subtitles: any;
+  subtitles: string[];
   disconnectSTT: () => Promise<void>;
 } => {
   // console.log("STT - Processing")
@@ -23,7 +23,7 @@ export const useSTT = (): {
   const room = useRoomContext();
   const recorders = useParticipantRecorders(room);
   const { connectToDeepgram, disconnectFromDeepgram, connection, connectionState } = useDeepgram();
-  const [subtitles, setSubtitles] = useState<ParticipantSubtitles[]>([]);
+  const [subtitles, setSubtitles] = useState<string[]>([]);
 
   // 1. Connect to Deepgram
   const connectSTT = async () => await connectToDeepgram({
@@ -33,6 +33,7 @@ export const useSTT = (): {
     filler_words: true,
     utterance_end_ms: 3000,
     punctuate: true,
+    language: "multi",
   });
   const disconnectSTT = async () => await disconnectFromDeepgram();
   useEffect(() => {
@@ -57,7 +58,11 @@ export const useSTT = (): {
   useEffect(() => {
     if (connection) {
       connection?.on(LiveTranscriptionEvents.Transcript, (transcript) => {
-        console.log("STT - Transcript", transcript.channel.alternatives[0].transcript);
+        const text = transcript.channel.alternatives[0].transcript;
+        console.log("STT - Transcript \"" + text + "\"");
+        if (text !== "") {
+          setSubtitles((prev) => [...prev, text]);
+        }
       });
     }
   }, [connection]);

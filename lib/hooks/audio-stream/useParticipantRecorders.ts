@@ -15,6 +15,7 @@ export const useParticipantRecorders = (room: Room): ParticipantRecorder[] => {
   const [mediaRecorders, setMediaRecorders] = useState<ParticipantRecorder[]>([]);
 
   useEffect(() => {
+    console.log("STT.Processor - Streams Changed", streams);
     for (let i = 0; i < streams.length; i++) {
       const stream = streams[i];
       
