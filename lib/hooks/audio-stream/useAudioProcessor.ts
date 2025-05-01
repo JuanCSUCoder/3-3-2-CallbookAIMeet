@@ -1,11 +1,13 @@
-import { useParticipants, useTracks } from "@livekit/components-react";
-import { Participant, Room, RoomEvent, Track, TrackPublication } from "livekit-client";
+
+import { Room } from "livekit-client";
 import { useEffect, useState } from "react";
 import { useAudio } from "./useAudio";
 
 export const useAudioProcessor = (room: Room) => {
   const [streams, audioContext] = useAudio(room);
   const [pcmWorklet, setWorklet] = useState<AudioWorkletNode | null>(null);
+
+  console.log("STT.Processor - Processing")
 
   useEffect(() => {
     console.log("STT - Audio info", streams, audioContext);

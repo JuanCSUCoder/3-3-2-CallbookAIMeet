@@ -1,6 +1,6 @@
 'use client';
 
-import { useSTT } from '@/lib/hooks/audio-stream/useSTT';
+import { AugmentedVideoConference } from '@/lib/components/AugmentedVideoConference';
 import { decodePassphrase } from '@/lib/livekit/client-utils';
 import { DebugMode } from '@/lib/livekit/Debug';
 import { RecordingIndicator } from '@/lib/livekit/RecordingIndicator';
@@ -144,9 +144,6 @@ function VideoConferenceComponent(props: {
 
   const room = React.useMemo(() => new Room(roomOptions), []);
 
-  const stt = useSTT(room);
-
-
   React.useEffect(() => {
     if (e2eeEnabled) {
       keyProvider
@@ -223,7 +220,7 @@ function VideoConferenceComponent(props: {
   return (
     <div className="lk-room-container">
       <RoomContext.Provider value={room}>
-        <VideoConference
+        <AugmentedVideoConference
           chatMessageFormatter={formatChatMessageLinks}
           SettingsComponent={SHOW_SETTINGS_MENU ? SettingsMenu : undefined}
         />

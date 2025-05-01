@@ -6,6 +6,8 @@ export const useAudio = (room: Room): [MediaStream[], AudioContext | null] => {
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const [audioStreams, setAudioStreams] = useState<MediaStream[]>([]);
 
+  console.log("STT.Processor.Audio - Processing")
+
   type TrackReference = {
     participant: Participant;
     publication: TrackPublication;
@@ -19,9 +21,13 @@ export const useAudio = (room: Room): [MediaStream[], AudioContext | null] => {
       RoomEvent.ParticipantDisconnected,
       RoomEvent.ConnectionStateChanged,
       RoomEvent.ParticipantMetadataChanged,
+      RoomEvent.TrackPublished,
+      RoomEvent.TrackUnpublished,
     ],
     room,
   });
+
+  console.log("STT.Audio - Tracks", tracks);
 
   useEffect(() => {
     // 2. Get audio streams for the participants, to send to STT
