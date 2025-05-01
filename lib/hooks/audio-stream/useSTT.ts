@@ -2,7 +2,8 @@ import { LiveTranscriptionEvents, SOCKET_STATES } from "@deepgram/sdk";
 import { useDeepgram } from "../deepgram-wrapper/useDeepgram";
 import { useParticipantRecorders } from "./useParticipantRecorders";
 import { useRoomContext } from "@livekit/components-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { LogLevel, setLogLevel } from "livekit-client";
 
 export interface ParticipantSubtitles {
   participant: string;
@@ -10,18 +11,39 @@ export interface ParticipantSubtitles {
 }
 
 export const useSTT = (): {
-  connectSTT: () => Promise<void>;
-  disconnectSTT: () => Promise<void>;
   connectionState: SOCKET_STATES;
   subtitles: any;
+  disconnectSTT: () => Promise<void>;
 } => {
-  console.log("STT - Processing")
+  // console.log("STT - Processing")
+
+  // Disable Livekit logging
+  setLogLevel(LogLevel.silent);
 
   const room = useRoomContext();
   const recorders = useParticipantRecorders(room);
   const { connectToDeepgram, disconnectFromDeepgram, connection, connectionState } = useDeepgram();
   const [subtitles, setSubtitles] = useState<ParticipantSubtitles[]>([]);
 
+  // 1. Connect to Deepgram
+  const connectSTT = async () => await connectToDeepgram({
+    model: "nova-3",
+    interim_results: true,
+    smart_format: true,
+    filler_words: true,
+    utterance_end_ms: 3000,
+    punctuate: true,
+  });
+  const disconnectSTT = async () => await disconnectFromDeepgram();
+  useEffect(() => {
+    connectSTT().then(() => {
+      console.log("STT - Connected to Deepgram");
+    }).catch((error) => {
+      console.error("STT - Error connecting to Deepgram", error);
+    });
+  }, []);
+
+  // 2. Send audio stream to Deepgram
   recorders.forEach(recorder => {
     // Send recorder data when available to Deepgram
     recorder.audioRecorder.ondataavailable = (event) => {
@@ -31,21 +53,14 @@ export const useSTT = (): {
     }
   });
 
+  // 3. Receive subtitles from Deepgram
   connection?.on(LiveTranscriptionEvents.Transcript, (transcript) => {
     console.log("STT - Transcript", transcript.channel.alternatives[0].transcript);
-   });
+  });
 
   return {
-    connectSTT: async () => await connectToDeepgram({
-      model: "nova-3",
-      interim_results: true,
-      smart_format: true,
-      filler_words: true,
-      utterance_end_ms: 3000,
-      punctuate: true,
-    }),
-    disconnectSTT: async () => await disconnectFromDeepgram(),
     connectionState,
     subtitles,
+    disconnectSTT,
   };
 }
