@@ -7,7 +7,7 @@ export interface ParticipantStream {
   audioStream: MediaStream;
 }
 
-export const useAudio = (room: Room): ParticipantStream[] => {
+export const useParticipantStreams = (room: Room): ParticipantStream[] => {
   const [audioStreams, setAudioStreams] = useState<ParticipantStream[]>([]);
 
   console.log("STT.Processor.Audio - Processing")
