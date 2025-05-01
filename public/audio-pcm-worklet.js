@@ -6,6 +6,8 @@ export class PcmProcessor extends AudioWorkletProcessor {
     super();
     // You can get processorOptions passed from the main thread here
     // e.g., options.processorOptions.someValue
+
+    console.log('PcmProcessor - initialized');
   }
 
   process(inputs, outputs, parameters) {
@@ -13,6 +15,8 @@ export class PcmProcessor extends AudioWorkletProcessor {
     // Each input contains an array of channels.
     // Each channel contains a Float32Array with the PCM audio samples.
     const input = inputs[0]; // Get the first input
+
+    // console.log('PcmProcessor - processing', inputs);
 
     if (input && input.length > 0) {
       // Assuming mono input, get the first channel

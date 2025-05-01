@@ -16,7 +16,7 @@ export const useAudioProcessor = (room: Room) => {
     console.log("STT - Audio info", streams, audioContext);
 
     if (audioContext) {
-      audioContext.audioWorklet.addModule('audio-pcm-worklet.js')
+      audioContext.audioWorklet.addModule('/audio-pcm-worklet.js')
         .then((module) => {
           console.log("STT.Processor - Module Added", module)
           setWorklet(new AudioWorkletNode(audioContext, 'PcmProcessor'));
