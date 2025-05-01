@@ -8,5 +8,13 @@ export const useSTT = () => {
   const room = useRoomContext();
   const audioProcessor = useAudioProcessor(room);
 
+  if (audioProcessor) {
+    audioProcessor.port.onmessage = (event) => {
+      const { data } = event;
+      console.log("STT - Audio data", data);
+      // Process the audio data here
+    };
+  }
+
   return audioProcessor;
 }
