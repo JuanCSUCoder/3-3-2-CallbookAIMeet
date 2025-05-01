@@ -54,9 +54,13 @@ export const useSTT = (): {
   });
 
   // 3. Receive subtitles from Deepgram
-  connection?.on(LiveTranscriptionEvents.Transcript, (transcript) => {
-    console.log("STT - Transcript", transcript.channel.alternatives[0].transcript);
-  });
+  useEffect(() => {
+    if (connection) {
+      connection?.on(LiveTranscriptionEvents.Transcript, (transcript) => {
+        console.log("STT - Transcript", transcript.channel.alternatives[0].transcript);
+      });
+    }
+  }, [connection]);
 
   return {
     connectionState,

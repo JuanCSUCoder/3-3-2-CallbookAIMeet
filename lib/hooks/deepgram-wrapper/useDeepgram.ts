@@ -6,8 +6,9 @@ export const useDeepgram = () => {
   const [connectionState, setConnectionState] = useState<SOCKET_STATES>(SOCKET_STATES.closed);
 
   const connectToDeepgram = async (options: LiveSchema) => {
-    const key = process.env.DEEPGRAM_API_KEY;
-    const endpoint = process.env.DEEPGRAM_API_ENDPOINT || "";
+    const key = process.env.NEXT_PUBLIC_DEEPGRAM_API_KEY;
+    const endpoint = process.env.NEXT_PUBLIC_DEEPGRAM_API_ENDPOINT || ":version/listen";
+    console.log("STT - Connecting to Deepgram", { key, endpoint });
     const deepgram = createClient(key);
 
     const conn = deepgram.listen.live(options, endpoint);
