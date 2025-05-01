@@ -10,7 +10,7 @@ export interface ParticipantStream {
 export const useParticipantStreams = (room: Room): ParticipantStream[] => {
   const [audioStreams, setAudioStreams] = useState<ParticipantStream[]>([]);
 
-  console.log("STT.Processor.Audio - Processing")
+  // console.log("STT.Processor.Audio - Processing")
 
   type TrackReference = {
     participant: Participant;
@@ -31,7 +31,7 @@ export const useParticipantStreams = (room: Room): ParticipantStream[] => {
     room,
   });
 
-  console.log("STT.Processor.Audio - Tracks", tracks);
+  // console.log("STT.Processor.Audio - Tracks", tracks);
 
   useEffect(() => {
     // 2. Get audio streams for the participants, to send to STT

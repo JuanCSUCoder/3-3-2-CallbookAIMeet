@@ -9,7 +9,7 @@ export interface ParticipantRecorder {
 }
 
 export const useParticipantRecorders = (room: Room): ParticipantRecorder[] => {
-  console.log("STT.Processor - Processing")
+  // console.log("STT.Processor - Processing")
 
   const streams = useParticipantStreams(room);
   const [mediaRecorders, setMediaRecorders] = useState<ParticipantRecorder[]>([]);
