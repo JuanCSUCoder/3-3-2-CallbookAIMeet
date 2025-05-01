@@ -25,8 +25,8 @@ export const useParticipantStreams = (room: Room): ParticipantStream[] => {
       RoomEvent.ParticipantDisconnected,
       RoomEvent.ConnectionStateChanged,
       RoomEvent.ParticipantMetadataChanged,
-      RoomEvent.TrackPublished,
-      RoomEvent.TrackUnpublished,
+      // RoomEvent.TrackPublished,
+      // RoomEvent.TrackUnpublished,
     ],
     room,
   });

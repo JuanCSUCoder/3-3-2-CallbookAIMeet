@@ -1,4 +1,4 @@
-import { SOCKET_STATES } from "@deepgram/sdk";
+import { LiveTranscriptionEvents, SOCKET_STATES } from "@deepgram/sdk";
 import { useDeepgram } from "../deepgram-wrapper/useDeepgram";
 import { useParticipantRecorders } from "./useParticipantRecorders";
 import { useRoomContext } from "@livekit/components-react";
@@ -23,12 +23,17 @@ export const useSTT = (): {
   const [subtitles, setSubtitles] = useState<ParticipantSubtitles[]>([]);
 
   recorders.forEach(recorder => {
+    // Send recorder data when available to Deepgram
     recorder.audioRecorder.ondataavailable = (event) => {
-      const audioBlob = new Blob([event.data], { type: "audio/mpeg" });
-      const audioUrl = URL.createObjectURL(audioBlob);
-      console.log("Audio URL:", audioUrl);
+      if (event.data.size > 0 && connection) {
+        connection.send(event.data);
+      }
     }
   });
+
+  connection?.on(LiveTranscriptionEvents.Transcript, (transcript) => {
+    console.log("STT - Transcript", transcript.channel.alternatives[0].transcript);
+   });
 
   return {
     connectSTT: async () => await connectToDeepgram({

@@ -20,7 +20,7 @@ export const useParticipantRecorders = (room: Room): ParticipantRecorder[] => {
       
       setMediaRecorders(prev => {
         const audioRecorder = new MediaRecorder(stream.audioStream, {
-          mimeType: "audio/mpeg",
+          mimeType: "audio/webm",
           audioBitsPerSecond: 128000,
         });
 
@@ -33,7 +33,7 @@ export const useParticipantRecorders = (room: Room): ParticipantRecorder[] => {
         }];
       });
     }
-  });
+  }, [streams]);
 
   return mediaRecorders;
 };
