@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import { useAudio } from "./useAudio";
 
 export const useAudioProcessor = (room: Room) => {
+  console.log("STT.Processor - Processing")
+
   const [streams, audioContext] = useAudio(room);
   const [pcmWorklet, setWorklet] = useState<AudioWorkletNode | null>(null);
-
-  console.log("STT.Processor - Processing")
 
   useEffect(() => {
     console.log("STT - Audio info", streams, audioContext);
@@ -23,11 +23,11 @@ export const useAudioProcessor = (room: Room) => {
 
       audioContext.audioWorklet.addModule('audio-pcm-worklet.js')
         .then((module) => {
-          console.log("STT - Module Added", module)
+          console.log("STT.Processor - Module Added", module)
           setWorklet(new AudioWorkletNode(audioContext, 'PcmProcessor'));
-          console.log("STT - Worklet created");
+          console.log("STT.Processor - Worklet created");
           return audioContext.resume()
-        }).then(res => console.log("STT - Ready", res));
+        }).then(res => console.log("STT.Processor - Ready", res));
     }
   }, [streams, audioContext]);
 

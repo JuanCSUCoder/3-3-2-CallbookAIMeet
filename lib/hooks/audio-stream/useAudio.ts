@@ -27,7 +27,7 @@ export const useAudio = (room: Room): [MediaStream[], AudioContext | null] => {
     room,
   });
 
-  console.log("STT.Audio - Tracks", tracks);
+  console.log("STT.Processor.Audio - Tracks", tracks);
 
   useEffect(() => {
     // 2. Get audio streams for the participants, to send to STT
