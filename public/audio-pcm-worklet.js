@@ -1,4 +1,3 @@
-
 export class PcmProcessor extends AudioWorkletProcessor {
   // You can add a constructor or static getter for parameters if needed
   // static get parameterDescriptors() { return [{ name: 'myParam', defaultValue: 0 }]; }
@@ -9,19 +8,15 @@ export class PcmProcessor extends AudioWorkletProcessor {
     // e.g., options.processorOptions.someValue
   }
 
-  process(
-    inputs: Float32Array[][], 
-    outputs: Float32Array[][], 
-    parameters: Record<string, Float32Array>
-  ): boolean {
+  process(inputs, outputs, parameters) {
     // inputs contains an array of inputs connected to the node.
     // Each input contains an array of channels.
     // Each channel contains a Float32Array with the PCM audio samples.
-    const input: Float32Array[] | undefined = inputs[0]; // Get the first input
+    const input = inputs[0]; // Get the first input
 
     if (input && input.length > 0) {
       // Assuming mono input, get the first channel
-      const channelData: Float32Array = input[0];
+      const channelData = input[0];
 
       // channelData is a Float32Array containing the raw PCM samples
       // for this processing block (typically 128 samples).
