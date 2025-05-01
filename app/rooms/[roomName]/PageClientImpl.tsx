@@ -1,5 +1,6 @@
 'use client';
 
+import { useSTT } from '@/lib/hooks/audio-stream/useSTT';
 import { decodePassphrase } from '@/lib/livekit/client-utils';
 import { DebugMode } from '@/lib/livekit/Debug';
 import { RecordingIndicator } from '@/lib/livekit/RecordingIndicator';
@@ -143,7 +144,7 @@ function VideoConferenceComponent(props: {
 
   const room = React.useMemo(() => new Room(roomOptions), []);
 
-  
+  const stt = useSTT(room);
 
 
   React.useEffect(() => {
