@@ -8,26 +8,29 @@ export interface ParticipantRecorder {
   audioRecorder: MediaRecorder;
 }
 
-export const useParticipantRecorders = (room: Room) => {
+export const useParticipantRecorders = (room: Room): ParticipantRecorder[] => {
   console.log("STT.Processor - Processing")
 
   const streams = useParticipantStreams(room);
-  const [mediaRecorders, setMediaRecorders] = useState<MediaRecorder[]>([]);
+  const [mediaRecorders, setMediaRecorders] = useState<ParticipantRecorder[]>([]);
 
   useEffect(() => {
     for (let i = 0; i < streams.length; i++) {
       const stream = streams[i];
       
       setMediaRecorders(prev => {
-        const newMR = new MediaRecorder(stream, {
+        const audioRecorder = new MediaRecorder(stream.audioStream, {
           mimeType: "audio/mpeg",
           audioBitsPerSecond: 128000,
         });
 
-        newMR.start(250);
-        newMR.resume();
+        audioRecorder.start(250);
+        audioRecorder.resume();
 
-        return [...prev, newMR];
+        return [...prev, {
+          audioRecorder,
+          participant: stream.participant,
+        }];
       });
     }
   });
