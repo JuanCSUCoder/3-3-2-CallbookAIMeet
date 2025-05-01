@@ -21,6 +21,14 @@ export const useDeepgram = () => {
       setConnectionState(SOCKET_STATES.closed);
     });
 
+    conn.on(LiveTranscriptionEvents.Error, (error) => {
+      console.error("STT.Deepgram - Error connecting to Deepgram", error);
+    });
+
+    conn.on(LiveTranscriptionEvents.Unhandled, () => {
+      console.error("STT.Deepgram - Unhandled event");
+    });
+
     setConnection(conn);
   };
 

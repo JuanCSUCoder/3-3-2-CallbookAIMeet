@@ -15,6 +15,7 @@ import {
   LayoutContextProvider,
   ParticipantTile,
   RoomAudioRenderer,
+  Toast,
 } from '@livekit/components-react';
 import { MessageFormatter } from '@livekit/components-react';
 import { useSTT } from '@/lib/hooks/audio-stream/useSTT';
@@ -57,7 +58,11 @@ export function AugmentedVideoConference({
   ...props
 }: VideoConferenceProps) {
   const { focusTrack, layoutContext, widgetUpdate, tracks, carouselTracks, widgetState } = useLiveKitConferenceData();
-  const stt = useSTT();
+  const {
+    connectionState,
+    subtitles,
+    disconnectSTT,
+  } = useSTT();
 
   return (
     <div className="lk-video-conference" {...props}>
@@ -104,6 +109,10 @@ export function AugmentedVideoConference({
       )}
       <RoomAudioRenderer />
       <ConnectionStateToast />
+      {
+        subtitles[subtitles.length-1] &&
+        <Toast>{ subtitles[subtitles.length-1] }</Toast>
+      }
     </div>
   );
 }

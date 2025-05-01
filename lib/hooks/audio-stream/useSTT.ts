@@ -25,22 +25,28 @@ export const useSTT = (): {
   const { connectToDeepgram, disconnectFromDeepgram, connection, connectionState } = useDeepgram();
   const [subtitles, setSubtitles] = useState<string[]>([]);
 
-  // 1. Connect to Deepgram
+  // Utility methods
   const connectSTT = async () => await connectToDeepgram({
     model: "nova-3",
     interim_results: true,
     smart_format: true,
     filler_words: true,
-    utterance_end_ms: 3000,
     punctuate: true,
     language: "multi",
   });
   const disconnectSTT = async () => await disconnectFromDeepgram();
+  const reconnectSTT = async () => {
+    if (connectionState == SOCKET_STATES.closed) {
+      await connectSTT()
+    }
+  };
+
+  // 1. Connect to Deepgram
   useEffect(() => {
     connectSTT().then(() => {
-      console.log("STT - Connected to Deepgram");
+      console.log("STT.connect - Connected to Deepgram");
     }).catch((error) => {
-      console.error("STT - Error connecting to Deepgram", error);
+      console.error("STT.connect - Error connecting to Deepgram", error);
     });
   }, []);
 
@@ -58,9 +64,20 @@ export const useSTT = (): {
     });
   }, [recorders, connection]);
 
+  // Reconnect to Deepgram if connection state changes
+  useEffect(() => {
+    console.log("STT - Connection State Changed", connectionState == SOCKET_STATES.open, connectionState);
+    // reconnectSTT().then(() => {
+    //   console.log("STT.connectionState - Reconnected to Deepgram");
+    // }
+    // ).catch((error) => {
+    //   console.error("STT.connectionState - Error reconnecting to Deepgram", error);
+    // });
+  }, [connectionState]);
+
   // 3. Receive subtitles from Deepgram
   useEffect(() => {
-    console.log("STT - Connection Changed", connectionState, connection);
+    console.log("STT.connection - Connection Changed", connectionState == SOCKET_STATES.open, connectionState);
     if (connection) {
       connection?.on(LiveTranscriptionEvents.Transcript, (transcript) => {
         const text = transcript.channel.alternatives[0].transcript;
@@ -70,11 +87,7 @@ export const useSTT = (): {
         }
       });
     }
-  }, [connection, connectionState]);
-
-  useEffect(() => {
-    console.log("STT - Connection State Changed", connectionState);
-  }, [connectionState]);
+  }, [connection]);
 
   return {
     connectionState,
