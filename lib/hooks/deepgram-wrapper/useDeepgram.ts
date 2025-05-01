@@ -12,11 +12,11 @@ export const useDeepgram = () => {
 
     const conn = deepgram.listen.live(options, endpoint);
 
-    conn.addListener(LiveTranscriptionEvents.Open, () => {
+    conn.on(LiveTranscriptionEvents.Open, () => {
       setConnectionState(SOCKET_STATES.open);
     });
 
-    conn.addListener(LiveTranscriptionEvents.Close, () => {
+    conn.on(LiveTranscriptionEvents.Close, () => {
       setConnectionState(SOCKET_STATES.closed);
     });
 
