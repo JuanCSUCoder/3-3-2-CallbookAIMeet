@@ -143,42 +143,7 @@ function VideoConferenceComponent(props: {
 
   const room = React.useMemo(() => new Room(roomOptions), []);
 
-  const participants = useParticipants({
-    updateOnlyOn: [
-      RoomEvent.ParticipantConnected,
-      RoomEvent.ParticipantDisconnected,
-      RoomEvent.ConnectionStateChanged,
-      RoomEvent.ParticipantMetadataChanged,
-    ],
-    room,
-  });
-
-  type TrackReference = {
-    participant: Participant;
-    publication: TrackPublication;
-    source: Track.Source;
-  };
-
-  // Get audio stream for the first participant, to send to STT
-  const track = useTracks(["microphone"] as Track.Source[], {
-    updateOnlyOn: [
-      RoomEvent.ParticipantConnected,
-      RoomEvent.ParticipantDisconnected,
-      RoomEvent.ConnectionStateChanged,
-      RoomEvent.ParticipantMetadataChanged,
-    ],
-    room,
-  })[0] as TrackReference;
-  console.log('track', track);
-  if (track) {
-    const mediaStream = track.publication.track?.mediaStream;
-    console.log('mediaStream', mediaStream);
-
-    if (mediaStream) {
-      const audioContext = new AudioContext();
-      const mediaStreamSource = audioContext.createMediaStreamSource(mediaStream);
-    }
-  }
+  
 
 
   React.useEffect(() => {
