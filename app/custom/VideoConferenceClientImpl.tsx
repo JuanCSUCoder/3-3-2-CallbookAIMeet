@@ -10,10 +10,10 @@ import {
   VideoPresets,
   type VideoCodec,
 } from 'livekit-client';
-import { DebugMode } from '@/lib/Debug';
+import { DebugMode } from '@/lib/livekit/Debug';
 import { useEffect, useMemo } from 'react';
-import { decodePassphrase } from '@/lib/client-utils';
-import { SettingsMenu } from '@/lib/SettingsMenu';
+import { decodePassphrase } from '@/lib/livekit/client-utils';
+import { SettingsMenu } from '@/lib/livekit/SettingsMenu';
 
 export function VideoConferenceClientImpl(props: {
   liveKitUrl: string;

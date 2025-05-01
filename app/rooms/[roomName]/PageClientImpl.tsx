@@ -1,9 +1,9 @@
 'use client';
 
-import { decodePassphrase } from '@/lib/client-utils';
-import { DebugMode } from '@/lib/Debug';
-import { RecordingIndicator } from '@/lib/RecordingIndicator';
-import { SettingsMenu } from '@/lib/SettingsMenu';
+import { decodePassphrase } from '@/lib/livekit/client-utils';
+import { DebugMode } from '@/lib/livekit/Debug';
+import { RecordingIndicator } from '@/lib/livekit/RecordingIndicator';
+import { SettingsMenu } from '@/lib/livekit/SettingsMenu';
 import { ConnectionDetails } from '@/lib/types';
 import {
   formatChatMessageLinks,
