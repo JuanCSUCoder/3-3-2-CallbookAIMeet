@@ -13,7 +13,6 @@ export interface ParticipantSubtitles {
 export const useSTT = (): {
   connectionState: SOCKET_STATES;
   subtitles: string[];
-  disconnectSTT: () => Promise<void>;
 } => {
   // console.log("STT - Processing")
 
@@ -22,45 +21,10 @@ export const useSTT = (): {
 
   const room = useRoomContext();
   const recorders = useParticipantRecorders(room);
-  const { connectToDeepgram, disconnectFromDeepgram, connection, connectionState } = useDeepgram();
   const [subtitles, setSubtitles] = useState<string[]>([]);
 
-  // Utility methods
-  const connectSTT = async () => await connectToDeepgram({
-    model: "nova-3",
-    interim_results: true,
-    smart_format: true,
-    filler_words: true,
-    punctuate: true,
-    language: "multi",
-  });
-  const disconnectSTT = async () => await disconnectFromDeepgram();
-  const reconnectSTT = async () => {
-    if (connectionState == SOCKET_STATES.closed) {
-      await disconnectSTT();
-      await connectSTT();
-    }
-  };
-
   // 1. Connect to Deepgram
-  useEffect(() => {
-    connectSTT().then(() => {
-      console.log("STT.connect - Connected to Deepgram");
-    }).catch((error) => {
-      console.error("STT.connect - Error connecting to Deepgram", error);
-    });
-  }, []);
-
-  // // 1.1. Reconnect to Deepgram if connection state changes
-  // useEffect(() => {
-  //   console.log("STT - Connection State Changed", connectionState == SOCKET_STATES.open, connectionState);
-  //   reconnectSTT().then(() => {
-  //     console.log("STT.connectionState - Reconnected to Deepgram");
-  //   }
-  //   ).catch((error) => {
-  //     console.error("STT.connectionState - Error reconnecting to Deepgram", error);
-  //   });
-  // }, [connectionState]);
+  const { connection, connectionState } = useDeepgram();
 
   // 2. Send audio stream to Deepgram
   useEffect(() => {
@@ -68,7 +32,7 @@ export const useSTT = (): {
     recorders.forEach(recorder => {
       // Send recorder data when available to Deepgram
       recorder.audioRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0 && connection) {
+        if (event.data.size > 100 && connection) {
           // console.log("STT - Sending audio data to Deepgram", event.data);
           connection.send(event.data);
         }
@@ -93,6 +57,5 @@ export const useSTT = (): {
   return {
     connectionState,
     subtitles,
-    disconnectSTT,
   };
 }

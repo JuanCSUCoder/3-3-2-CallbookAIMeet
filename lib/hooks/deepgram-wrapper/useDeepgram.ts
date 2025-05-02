@@ -1,11 +1,21 @@
 import { createClient, LiveClient, LiveSchema, LiveTranscriptionEvents, SOCKET_STATES } from "@deepgram/sdk";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const useDeepgram = () => {
   const [connection, setConnection] = useState<LiveClient | null>(null);
   const [connectionState, setConnectionState] = useState<SOCKET_STATES>(SOCKET_STATES.closed);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const connectToDeepgram = async (options: LiveSchema) => {
+  useEffect(() => {
+    const options: LiveSchema = {
+      model: "nova-3",
+      interim_results: true,
+      smart_format: true,
+      filler_words: true,
+      punctuate: true,
+      language: "multi",
+    };
+
     const key = process.env.NEXT_PUBLIC_DEEPGRAM_API_KEY;
     const endpoint = process.env.NEXT_PUBLIC_DEEPGRAM_API_ENDPOINT || ":version/listen";
     console.log("STT - Connecting to Deepgram", { key, endpoint });
@@ -27,10 +37,14 @@ export const useDeepgram = () => {
 
     conn.on(LiveTranscriptionEvents.Unhandled, () => {
       console.error("STT.Deepgram - Unhandled event");
-    });
+    }); 
+
+    intervalRef.current = setInterval(() => {
+      conn.keepAlive();
+    }, 500);
 
     setConnection(conn);
-  };
+  }, []);
 
   const disconnectFromDeepgram = async () => {
     if (connection) {
@@ -40,7 +54,6 @@ export const useDeepgram = () => {
   };
 
   return {
-    connectToDeepgram,
     disconnectFromDeepgram,
     connection,
     connectionState,

@@ -61,7 +61,6 @@ export function AugmentedVideoConference({
   const {
     connectionState,
     subtitles,
-    disconnectSTT,
   } = useSTT();
 
   return (
