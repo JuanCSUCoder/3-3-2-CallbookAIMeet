@@ -7,25 +7,22 @@ export const useDeepgram = () => {
   const [connectionState, setConnectionState] = useState<SOCKET_STATES>(SOCKET_STATES.closed);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  const options: LiveSchema = {
+    model: "nova-3",
+    interim_results: true,
+    smart_format: true,
+    filler_words: true,
+    punctuate: true,
+    language: "multi",
+  };
+
   const reconnect = () => {
     if (connection) {
-      connection.requestClose();
-      setConnection(null);
+      connection.reconnect(options);
     }
-    intervalRef.current && clearInterval(intervalRef.current);
-    setReconnectCount((prev) => prev + 1);
   };
 
   useEffect(() => {
-    const options: LiveSchema = {
-      model: "nova-3",
-      interim_results: true,
-      smart_format: true,
-      filler_words: true,
-      punctuate: true,
-      language: "multi",
-    };
-
     const key = process.env.NEXT_PUBLIC_DEEPGRAM_API_KEY;
     const endpoint = process.env.NEXT_PUBLIC_DEEPGRAM_API_ENDPOINT || ":version/listen";
     console.log("STT - Connecting to Deepgram, count: ", reconnectCount);
@@ -62,5 +59,6 @@ export const useDeepgram = () => {
   return {
     connection,
     connectionState,
+    reconnect,
   }
 };

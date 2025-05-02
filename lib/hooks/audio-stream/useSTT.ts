@@ -2,7 +2,7 @@ import { LiveTranscriptionEvents, SOCKET_STATES } from "@deepgram/sdk";
 import { useDeepgram } from "../deepgram-wrapper/useDeepgram";
 import { useParticipantRecorders } from "./useParticipantRecorders";
 import { useRoomContext } from "@livekit/components-react";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { LogLevel, setLogLevel } from "livekit-client";
 
 export interface ParticipantSubtitles {
@@ -24,7 +24,12 @@ export const useSTT = (): {
   const [subtitles, setSubtitles] = useState<string[]>([]);
 
   // 1. Connect to Deepgram
-  const { connection, connectionState } = useDeepgram();
+  const { connection, connectionState, reconnect } = useDeepgram();
+
+  useEffect(() => {
+    console.log("STT.recorders.reconn - Reconnecting to Deepgram");
+    reconnect();
+  }, [recorders]);
 
   // 2. Send audio stream to Deepgram
   useEffect(() => {
