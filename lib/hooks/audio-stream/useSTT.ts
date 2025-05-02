@@ -37,7 +37,8 @@ export const useSTT = (): {
   const disconnectSTT = async () => await disconnectFromDeepgram();
   const reconnectSTT = async () => {
     if (connectionState == SOCKET_STATES.closed) {
-      await connectSTT()
+      await disconnectSTT();
+      await connectSTT();
     }
   };
 
@@ -50,9 +51,20 @@ export const useSTT = (): {
     });
   }, []);
 
+  // // 1.1. Reconnect to Deepgram if connection state changes
+  // useEffect(() => {
+  //   console.log("STT - Connection State Changed", connectionState == SOCKET_STATES.open, connectionState);
+  //   reconnectSTT().then(() => {
+  //     console.log("STT.connectionState - Reconnected to Deepgram");
+  //   }
+  //   ).catch((error) => {
+  //     console.error("STT.connectionState - Error reconnecting to Deepgram", error);
+  //   });
+  // }, [connectionState]);
+
   // 2. Send audio stream to Deepgram
   useEffect(() => {
-    // console.log("STT - Recorders Changed", recorders);
+    console.log("STT.recorders - Updating recorders", recorders);
     recorders.forEach(recorder => {
       // Send recorder data when available to Deepgram
       recorder.audioRecorder.ondataavailable = (event) => {
@@ -63,17 +75,6 @@ export const useSTT = (): {
       }
     });
   }, [recorders, connection]);
-
-  // Reconnect to Deepgram if connection state changes
-  useEffect(() => {
-    console.log("STT - Connection State Changed", connectionState == SOCKET_STATES.open, connectionState);
-    // reconnectSTT().then(() => {
-    //   console.log("STT.connectionState - Reconnected to Deepgram");
-    // }
-    // ).catch((error) => {
-    //   console.error("STT.connectionState - Error reconnecting to Deepgram", error);
-    // });
-  }, [connectionState]);
 
   // 3. Receive subtitles from Deepgram
   useEffect(() => {
