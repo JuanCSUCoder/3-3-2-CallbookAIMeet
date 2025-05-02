@@ -2,9 +2,19 @@ import { createClient, LiveClient, LiveSchema, LiveTranscriptionEvents, SOCKET_S
 import { useEffect, useRef, useState } from "react";
 
 export const useDeepgram = () => {
+  const [reconnectCount, setReconnectCount] = useState(0);
   const [connection, setConnection] = useState<LiveClient | null>(null);
   const [connectionState, setConnectionState] = useState<SOCKET_STATES>(SOCKET_STATES.closed);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const reconnect = () => {
+    if (connection) {
+      connection.requestClose();
+      setConnection(null);
+    }
+    intervalRef.current && clearInterval(intervalRef.current);
+    setReconnectCount((prev) => prev + 1);
+  };
 
   useEffect(() => {
     const options: LiveSchema = {
@@ -18,7 +28,7 @@ export const useDeepgram = () => {
 
     const key = process.env.NEXT_PUBLIC_DEEPGRAM_API_KEY;
     const endpoint = process.env.NEXT_PUBLIC_DEEPGRAM_API_ENDPOINT || ":version/listen";
-    console.log("STT - Connecting to Deepgram", { key, endpoint });
+    console.log("STT - Connecting to Deepgram, count: ", reconnectCount);
     const deepgram = createClient(key);
 
     const conn = deepgram.listen.live(options, endpoint);
@@ -29,14 +39,17 @@ export const useDeepgram = () => {
 
     conn.on(LiveTranscriptionEvents.Close, () => {
       setConnectionState(SOCKET_STATES.closed);
+      reconnect();
     });
 
     conn.on(LiveTranscriptionEvents.Error, (error) => {
       console.error("STT.Deepgram - Error connecting to Deepgram", error);
+      reconnect();
     });
 
     conn.on(LiveTranscriptionEvents.Unhandled, () => {
       console.error("STT.Deepgram - Unhandled event");
+      reconnect();
     }); 
 
     intervalRef.current = setInterval(() => {
@@ -44,17 +57,9 @@ export const useDeepgram = () => {
     }, 500);
 
     setConnection(conn);
-  }, []);
-
-  const disconnectFromDeepgram = async () => {
-    if (connection) {
-      connection.requestClose();
-      setConnection(null);
-    }
-  };
+  }, [reconnectCount]);
 
   return {
-    disconnectFromDeepgram,
     connection,
     connectionState,
   }
