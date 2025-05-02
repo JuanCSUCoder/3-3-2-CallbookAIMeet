@@ -13,7 +13,7 @@ class GTranslate {
     }
   }
 
-  public async translateText(text: string) {
+  public async translateText(text: string): Promise<string> {
     // Construct request
     const request = {
       "q": text,
@@ -35,13 +35,14 @@ class GTranslate {
       }
     );
     const json = await response.json();
-    const data = json.data;
+    const data: any | undefined = json.data;
 
-    for (const translation of data.translations ?? []) {
-      console.log(`Translation: ${translation.translatedText}`);
+    if (data && data.translations && data.translations.length > 0) {
+      return data.translations[0].translatedText;
+    } else {
+      console.error("GTranslate - Error translating text", json);
+      return '';
     }
-
-    return data.translations?.[0].translatedText || '';
   }
 }
 

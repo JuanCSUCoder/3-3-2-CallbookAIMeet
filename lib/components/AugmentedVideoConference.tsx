@@ -65,7 +65,15 @@ export function AugmentedVideoConference({
   } = useSTT();
 
   const lastSubtitle = subtitles[subtitles.length - 1];
-  const translated = gtranslate.translateText(lastSubtitle);
+  const [translated, setTranslated] = React.useState<string>('');
+
+  React.useEffect(() => {
+    if (lastSubtitle) {
+      gtranslate.translateText(lastSubtitle).then((text) => {
+        setTranslated(text);
+      });
+    }
+  }, [lastSubtitle]);
 
   return (
     <div className="lk-video-conference" {...props}>
