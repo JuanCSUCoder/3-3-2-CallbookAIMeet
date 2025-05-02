@@ -20,6 +20,7 @@ import {
 import { MessageFormatter } from '@livekit/components-react';
 import { useSTT } from '@/lib/hooks/audio-stream/useSTT';
 import { useLiveKitConferenceData } from '@/lib/hooks/livekit-wrappers/useLiveKitConferenceData';
+import { gtranslate } from '../translate/gtranslate';
 
 /**
  * @public
@@ -62,6 +63,9 @@ export function AugmentedVideoConference({
     connectionState,
     subtitles,
   } = useSTT();
+
+  const lastSubtitle = subtitles[subtitles.length - 1];
+  const translated = gtranslate.translateText(lastSubtitle);
 
   return (
     <div className="lk-video-conference" {...props}>
@@ -110,7 +114,14 @@ export function AugmentedVideoConference({
       <ConnectionStateToast />
       {
         subtitles[subtitles.length-1] &&
-        <Toast>{ subtitles[subtitles.length-1] }</Toast>
+        <Toast>
+            <p>{subtitles[subtitles.length - 1]}</p>
+            <p>
+              <i>
+                Translated: { translated }
+              </i>
+            </p>
+        </Toast>
       }
     </div>
   );
