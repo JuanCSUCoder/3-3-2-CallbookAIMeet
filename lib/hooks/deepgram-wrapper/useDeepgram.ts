@@ -1,4 +1,5 @@
 import { createClient, LiveClient, LiveSchema, LiveTranscriptionEvents, SOCKET_STATES } from "@deepgram/sdk";
+import { headers } from "next/headers";
 import { useEffect, useRef, useState } from "react";
 
 export const useDeepgram = () => {
@@ -7,6 +8,8 @@ export const useDeepgram = () => {
   const [connectionState, setConnectionState] = useState<SOCKET_STATES>(SOCKET_STATES.closed);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  const key = process.env.NEXT_PUBLIC_DEEPGRAM_API_KEY;
+  const endpoint = process.env.NEXT_PUBLIC_DEEPGRAM_API_ENDPOINT || ":version/listen";
   const options: LiveSchema = {
     model: "nova-3",
     interim_results: true,
@@ -18,13 +21,17 @@ export const useDeepgram = () => {
 
   const reconnect = () => {
     if (connection) {
+      // (connection.conn as WebSocket).close(1000, "Reconnecting");
       connection.reconnect(options);
+      // if (connection.transport) {
+      //   connection.conn = new connection.transport!!(connection.getRequestUrl(endpoint), undefined, {
+      //     headers: connection.headers,
+      //   });
+      // }
     }
   };
 
   useEffect(() => {
-    const key = process.env.NEXT_PUBLIC_DEEPGRAM_API_KEY;
-    const endpoint = process.env.NEXT_PUBLIC_DEEPGRAM_API_ENDPOINT || ":version/listen";
     console.log("STT - Connecting to Deepgram, count: ", reconnectCount);
     const deepgram = createClient(key);
 

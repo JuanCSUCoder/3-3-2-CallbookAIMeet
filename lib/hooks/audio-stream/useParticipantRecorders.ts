@@ -19,7 +19,7 @@ export const useParticipantRecorders = (room: Room): ParticipantRecorder[] => {
     setMediaRecorders(_ => {
       return streams.map((stream) => {
         const audioRecorder = new MediaRecorder(stream.audioStream, {
-          mimeType: "audio/webm",
+          mimeType: "audio/webm; codecs=opus",
           audioBitsPerSecond: 128000,
         });
 

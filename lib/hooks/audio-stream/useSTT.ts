@@ -24,12 +24,7 @@ export const useSTT = (): {
   const [subtitles, setSubtitles] = useState<string[]>([]);
 
   // 1. Connect to Deepgram
-  const { connection, connectionState, reconnect } = useDeepgram();
-
-  useEffect(() => {
-    console.log("STT.recorders.reconn - Reconnecting to Deepgram");
-    reconnect();
-  }, [recorders]);
+  const { connection, connectionState } = useDeepgram();
 
   // 2. Send audio stream to Deepgram
   useEffect(() => {
@@ -40,6 +35,8 @@ export const useSTT = (): {
         if (event.data.size > 100 && connection) {
           // console.log("STT - Sending audio data to Deepgram", event.data);
           connection.send(event.data);
+        } else {
+          connection?.send(new Blob([new Uint8Array([0,0,0,0,0,0,0,0])], { type: "audio/webm" }));
         }
       }
     });
@@ -52,9 +49,7 @@ export const useSTT = (): {
       connection?.on(LiveTranscriptionEvents.Transcript, (transcript) => {
         const text = transcript.channel.alternatives[0].transcript;
         console.log("STT - Transcript \"" + text + "\"");
-        if (text !== "") {
-          setSubtitles((prev) => [...prev, text]);
-        }
+        setSubtitles((prev) => [...prev, text]);
       });
     }
   }, [connection]);
