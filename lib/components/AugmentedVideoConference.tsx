@@ -105,8 +105,6 @@ export function AugmentedVideoConference({
           <Chat
             style={{ display: widgetState.showChat ? 'grid' : 'none' }}
             messageFormatter={chatMessageFormatter}
-            messageEncoder={chatMessageEncoder}
-            messageDecoder={chatMessageDecoder}
           />
           {SettingsComponent && (
             <div
