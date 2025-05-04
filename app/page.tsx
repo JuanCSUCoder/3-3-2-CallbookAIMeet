@@ -167,15 +167,13 @@ export default function Page() {
         <div className="header">
           <img src="/images/livekit-meet-home.svg" alt="LiveKit Meet" width="360" height="45" />
           <h2>
-            Open source video conferencing app built on{' '}
-            <a href="https://github.com/livekit/components-js?ref=meet" rel="noopener">
-              LiveKit&nbsp;Components
-            </a>
-            ,{' '}
-            <a href="https://livekit.io/cloud?ref=meet" rel="noopener">
-              LiveKit&nbsp;Cloud
-            </a>{' '}
-            and Next.js.
+            <strong>MeetAI</strong> is a demo project for a video conferencing app built with
+            <a href="https://livekit.io/">LiveKit</a>
+            , that integrates AI speech recognition and realtime translation with
+            <a href="https://deepgram.com/">Deepgram</a>
+            and
+            <a href="http://cloud.google.com/translate/docs/basic/translate-text-basic">Google Cloud Text Translate API</a>
+            .
           </h2>
         </div>
         <Suspense fallback="Loading">
